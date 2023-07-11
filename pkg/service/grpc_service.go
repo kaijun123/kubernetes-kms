@@ -29,13 +29,16 @@ import (
 
 // GRPCService is a grpc server that runs the kms v2 alpha1 API.
 type GRPCService struct {
+	// These 3 should be fixed
 	addr    string
 	timeout time.Duration
 	server  *grpc.Server
 
+	// Need to edit the kmsService methods
 	kmsService Service
 }
 
+// Asserts that the GRPC implements kmsapi.KeyManagementServiceServer: ie Status, Encrypt, Decrypt
 var _ kmsapi.KeyManagementServiceServer = (*GRPCService)(nil)
 
 // NewGRPCService creates an instance of GRPCService.
