@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"k8s.io/klog/v2"
-	qrng "k8s.io/kms/QRNG"
+	"k8s.io/kms/qrng"
 	"k8s.io/kms/service"
 	"k8s.io/kms/util"
 )
