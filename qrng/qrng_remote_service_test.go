@@ -5,8 +5,8 @@ import (
 
 	"testing"
 
+	"github.com/kaijun123/kubernetes-kms/util"
 	"github.com/stretchr/testify/assert"
-	"k8s.io/kms/util"
 )
 
 const (

@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"log"
 
-	"k8s.io/kms/http"
-	"k8s.io/kms/util"
+	"github.com/kaijun123/kubernetes-kms/http"
+	"github.com/kaijun123/kubernetes-kms/util"
 )
 
 var _ util.Service = (*qrngRemoteService)(nil)

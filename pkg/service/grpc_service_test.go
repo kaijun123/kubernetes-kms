@@ -31,8 +31,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	kmsapi "github.com/kaijun123/kubernetes-kms/apis/v2"
 	"k8s.io/apimachinery/pkg/util/wait"
-	kmsapi "k8s.io/kms/apis/v2"
 )
 
 const version = "v2alpha1"

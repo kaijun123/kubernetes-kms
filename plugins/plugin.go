@@ -24,10 +24,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/kaijun123/kubernetes-kms/qrng"
+	"github.com/kaijun123/kubernetes-kms/service"
+	"github.com/kaijun123/kubernetes-kms/util"
 	"k8s.io/klog/v2"
-	"k8s.io/kms/qrng"
-	"k8s.io/kms/service"
-	"k8s.io/kms/util"
 )
 
 var (
