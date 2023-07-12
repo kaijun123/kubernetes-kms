@@ -25,8 +25,8 @@ import (
 	"time"
 
 	"k8s.io/klog/v2"
-	"k8s.io/kms/internal"
-	"k8s.io/kms/pkg/service"
+	qrng "k8s.io/kms/QRNG"
+	"k8s.io/kms/service"
 	"k8s.io/kms/util"
 )
 
@@ -44,7 +44,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	remoteKMSService, err := internal.NewMockAESService("somerandomstring", "aes-key-id")
+	remoteKMSService, err := qrng.NewQrngRemoteService()
 	if err != nil {
 		klog.ErrorS(err, "failed to create remote service")
 		os.Exit(1)

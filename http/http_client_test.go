@@ -18,7 +18,7 @@ var (
 )
 
 // call get-key-id url on the on-premise server
-func TestInit(t *testing.T) {
+func TestMain(t *testing.T) {
 	resp, err1 := httpClient.Init()
 	assert.Equal(t, resp.StatusCode, 200)
 	assert.Equal(t, err1, nil)

@@ -3,6 +3,7 @@ package qrng
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -19,13 +20,16 @@ type qrngRemoteService struct {
 	httpClient *http.HTTPClient // Used for calling the apis on the on-premise server
 }
 
-func (s *qrngRemoteService) Encrypt(ctx context.Context, req *util.EncryptRequestBody) (*util.EncryptResponseBody, error) {
-	ciphertext, err := s.httpClient.Encrypt(req.KeyId, req.Plaintext)
+// Calls the `Encrypt()` method of the httpClient
+func (s *qrngRemoteService) Encrypt(ctx context.Context, uid string, plaintext []byte) (*util.EncryptResponseBody, error) {
+	fmt.Println("Calling Encrypt()......")
+
+	ciphertext, err := s.httpClient.Encrypt(s.keyId, plaintext)
 	if err != nil {
-		log.Fatal("error: ", err)
 		return nil, err
 	}
 
+	fmt.Println("End of Encrypt()......")
 	return &util.EncryptResponseBody{
 		KeyId:      s.keyId,
 		Ciphertext: ciphertext,
@@ -35,48 +39,62 @@ func (s *qrngRemoteService) Encrypt(ctx context.Context, req *util.EncryptReques
 	}, nil
 }
 
-func (s *qrngRemoteService) Decrypt(ctx context.Context, req *util.DecryptRequestBody) ([]byte, error) {
+// Calls the `Decrypt()` method of the httpClient
+func (s *qrngRemoteService) Decrypt(ctx context.Context, uid string, req *util.DecryptRequestBody) ([]byte, error) {
+	fmt.Println("Calling Decrypt()......")
+
+	if req.KeyId != s.keyId {
+		return nil, errors.New("invalid keyID")
+	}
+
 	plaintext, err := s.httpClient.Decrypt(req.KeyId, req.Ciphertext)
 	if err != nil {
-		log.Fatal("error: ", err)
 		return nil, err
 	}
+
+	fmt.Println("End of Decrypt()......")
 	return plaintext, nil
 }
 
-// Status returns the health status of the KMS plugin.
-// We perform a simple encrypt/decrypt operation to verify the plugin's connectivity with On-Premise server.
+// Status returns the api_version, health_status and key_id of the KMS plugin.
+// The API server considers the key_id returned from the Status procedure call to be authoritative.
+// If an EncryptRequest procedure call returns a key_id that is different from Status, the response is thrown away and the plugin is considered unhealthy.
+// In this methodm, we perform a simple encrypt/decrypt operation to verify the plugin's connectivity with On-Premise server.
 func (s *qrngRemoteService) Status(ctx context.Context) (*util.StatusResponseBody, error) {
-	plaintext := util.GenerateRandomString(32)
-	fmt.Println("plaintext: ", plaintext)
+	fmt.Println("Calling Status()......")
 
-	ciphertext, err1 := s.httpClient.Encrypt(s.keyId, []byte(plaintext))
-	if err1 != nil {
-		log.Fatal("error: ", err1)
-		return nil, err1
+	plaintext := util.GenerateRandomString(32)
+	// fmt.Println("plaintext: ", plaintext)
+
+	ciphertext, err := s.httpClient.Encrypt(s.keyId, []byte(plaintext))
+	if err != nil {
+		return nil, err
 	}
-	newPlaintext, err2 := s.httpClient.Decrypt(s.keyId, ciphertext)
-	if err2 != nil {
-		log.Fatal("error: ", err2)
-		return nil, err2
+	newPlaintext, err := s.httpClient.Decrypt(s.keyId, ciphertext)
+	if err != nil {
+		return nil, err
 	}
+	// fmt.Println("newPlaintext: ", string(newPlaintext))
+
 	if string(newPlaintext) != plaintext {
-		log.Fatal("error: ", err2)
-		return nil, err2
+		err := errors.New("error: Plaintext obtained after decryption is no the same as the plaintext before encryption")
+		return nil, err
 	}
-	fmt.Println("newPlaintext: ", string(newPlaintext))
 
 	resp := &util.StatusResponseBody{
 		Version: "v2beta1",
 		Healthz: "ok",
 		KeyId:   s.keyId,
 	}
+	fmt.Println("End of Status()......")
 	return resp, nil
 }
 
 // NewQrngRemoteService creates an instance of qrngRemoteService.
-// When creating a new instance of qrngRemoteService, you need to obtain a new keyId from the qrng
+// When creating a new instance of qrngRemoteService, you need to obtain a new keyId from the qrng.
 func NewQrngRemoteService() (*qrngRemoteService, error) {
+	fmt.Println("Calling NewQrngRemoteService()......")
+
 	httpClient := http.NewHTTPClient()
 	res, _ := httpClient.Init()
 	responseBody, err := ioutil.ReadAll(res.Body)
@@ -86,11 +104,12 @@ func NewQrngRemoteService() (*qrngRemoteService, error) {
 	}
 	var initResponse util.InitResponse
 	json.Unmarshal(responseBody, &initResponse)
-	fmt.Println(initResponse.KeyId)
+	// fmt.Println("KeyId: ", initResponse.KeyId)
 
 	qRemoteService := &qrngRemoteService{
 		keyId:      initResponse.KeyId,
 		httpClient: httpClient,
 	}
+	fmt.Println("End of NewQrngRemoteService()......")
 	return qRemoteService, nil
 }

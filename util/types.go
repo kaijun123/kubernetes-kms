@@ -5,9 +5,9 @@ import "context"
 // Service allows encrypting and decrypting data using an external Key Management Service.
 type Service interface {
 	// Encrypt bytes to a ciphertext.
-	Encrypt(ctx context.Context, req *EncryptRequestBody) (*EncryptResponseBody, error)
+	Encrypt(ctx context.Context, uid string, plaintext []byte) (*EncryptResponseBody, error)
 	// Decrypt a given bytearray to obtain the original data as bytes.
-	Decrypt(ctx context.Context, req *DecryptRequestBody) ([]byte, error)
+	Decrypt(ctx context.Context, uid string, req *DecryptRequestBody) ([]byte, error)
 	// Status returns the status of the KMS.
 	Status(ctx context.Context) (*StatusResponseBody, error)
 }
