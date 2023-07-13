@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	encryptUrl = "http://localhost:8080/encrypt"
-	decryptUrl = "http://localhost:8080/decrypt"
-	initUrl    = "http://localhost:8080/init"
+	encryptUrl = "http://host.docker.internal:8080/encrypt"
+	decryptUrl = "http://host.docker.internal:8080/decrypt"
+	initUrl    = "http://host.docker.internal:8080/init"
 )
 
 type HTTPClient struct {
