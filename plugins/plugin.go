@@ -24,9 +24,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kaijun123/kubernetes-kms/qrng"
-	"github.com/kaijun123/kubernetes-kms/service"
-	"github.com/kaijun123/kubernetes-kms/util"
+	"github.com/kaijun123/kubernetes-kms/pkg/qrng"
+	"github.com/kaijun123/kubernetes-kms/pkg/service"
+	"github.com/kaijun123/kubernetes-kms/pkg/util"
 	"k8s.io/klog/v2"
 )
 

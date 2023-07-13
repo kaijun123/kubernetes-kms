@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"math/rand"
 	"net"
 	"os"
@@ -32,10 +31,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	kmsapi "github.com/kaijun123/kubernetes-kms/apis/v2"
+	"github.com/kaijun123/kubernetes-kms/pkg/qrng"
+	"github.com/kaijun123/kubernetes-kms/pkg/util"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-const version = "v2alpha1"
+const version = "v2beta1"
 
 func TestGRPCService(t *testing.T) {
 	t.Parallel()
@@ -52,8 +53,14 @@ func TestGRPCService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	kmsService := newBase64Service(id)
-	server := NewGRPCService(address, defaultTimeout, kmsService)
+	// kmsService := newBase64Service(id)
+	// server := NewGRPCService(address, defaultTimeout, kmsService)
+
+	remoteKMSService, err := qrng.NewQrngRemoteService()
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := NewGRPCService(address, defaultTimeout, remoteKMSService)
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
 			panic(err)
@@ -148,25 +155,26 @@ func newClient(t *testing.T, address string) kmsapi.KeyManagementServiceClient {
 }
 
 type testService struct {
-	decrypt func(ctx context.Context, uid string, req *DecryptRequest) ([]byte, error)
-	encrypt func(ctx context.Context, uid string, data []byte) (*EncryptResponse, error)
-	status  func(ctx context.Context) (*StatusResponse, error)
+	decrypt func(ctx context.Context, uid string, req *util.DecryptRequestBody) ([]byte, error)
+	encrypt func(ctx context.Context, uid string, data []byte) (*util.EncryptResponseBody, error)
+	status  func(ctx context.Context) (*util.StatusResponseBody, error)
 }
 
-var _ Service = (*testService)(nil)
+var _ util.Service = (*testService)(nil)
 
-func (s *testService) Decrypt(ctx context.Context, uid string, req *DecryptRequest) ([]byte, error) {
+func (s *testService) Decrypt(ctx context.Context, uid string, req *util.DecryptRequestBody) ([]byte, error) {
 	return s.decrypt(ctx, uid, req)
 }
 
-func (s *testService) Encrypt(ctx context.Context, uid string, data []byte) (*EncryptResponse, error) {
+func (s *testService) Encrypt(ctx context.Context, uid string, data []byte) (*util.EncryptResponseBody, error) {
 	return s.encrypt(ctx, uid, data)
 }
 
-func (s *testService) Status(ctx context.Context) (*StatusResponse, error) {
+func (s *testService) Status(ctx context.Context) (*util.StatusResponseBody, error) {
 	return s.status(ctx)
 }
 
+// Creates a random keyId
 func makeID(rand func([]byte) (int, error)) (string, error) {
 	b := make([]byte, 10)
 	if _, err := rand(b); err != nil {
@@ -176,33 +184,33 @@ func makeID(rand func([]byte) (int, error)) (string, error) {
 	return base64.StdEncoding.EncodeToString(b), nil
 }
 
-func newBase64Service(keyID string) *testService {
-	decrypt := func(_ context.Context, _ string, req *DecryptRequest) ([]byte, error) {
-		if req.KeyID != keyID {
-			return nil, fmt.Errorf("keyID mismatch. want: %q, have: %q", keyID, req.KeyID)
-		}
+// func newBase64Service(keyId string) *testService {
+// 	decrypt := func(_ context.Context, _ string, req *util.DecryptRequestBody) ([]byte, error) {
+// 		if req.KeyId != keyId {
+// 			return nil, fmt.Errorf("keyId mismatch. want: %q, have: %q", keyId, req.KeyId)
+// 		}
 
-		return base64.StdEncoding.DecodeString(string(req.Ciphertext))
-	}
+// 		return base64.StdEncoding.DecodeString(string(req.Ciphertext))
+// 	}
 
-	encrypt := func(_ context.Context, _ string, data []byte) (*EncryptResponse, error) {
-		return &EncryptResponse{
-			Ciphertext: []byte(base64.StdEncoding.EncodeToString(data)),
-			KeyID:      keyID,
-		}, nil
-	}
+// 	encrypt := func(_ context.Context, _ string, data []byte) (*util.EncryptResponseBody, error) {
+// 		return &util.EncryptResponseBody{
+// 			Ciphertext: []byte(base64.StdEncoding.EncodeToString(data)),
+// 			KeyId:      keyId,
+// 		}, nil
+// 	}
 
-	status := func(_ context.Context) (*StatusResponse, error) {
-		return &StatusResponse{
-			Version: version,
-			Healthz: "ok",
-			KeyID:   keyID,
-		}, nil
-	}
+// 	status := func(_ context.Context) (*util.StatusResponseBody, error) {
+// 		return &util.StatusResponseBody{
+// 			Version: version,
+// 			Healthz: "ok",
+// 			KeyId:   keyId,
+// 		}, nil
+// 	}
 
-	return &testService{
-		decrypt: decrypt,
-		encrypt: encrypt,
-		status:  status,
-	}
-}
+// 	return &testService{
+// 		decrypt: decrypt,
+// 		encrypt: encrypt,
+// 		status:  status,
+// 	}
+// }

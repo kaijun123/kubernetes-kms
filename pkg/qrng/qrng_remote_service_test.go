@@ -5,7 +5,7 @@ import (
 
 	"testing"
 
-	"github.com/kaijun123/kubernetes-kms/util"
+	"github.com/kaijun123/kubernetes-kms/pkg/util"
 	"github.com/stretchr/testify/assert"
 )
 

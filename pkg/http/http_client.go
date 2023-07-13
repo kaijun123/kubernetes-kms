@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/kaijun123/kubernetes-kms/util"
+	"github.com/kaijun123/kubernetes-kms/pkg/util"
 )
 
 const (

@@ -24,18 +24,16 @@ import (
 	"google.golang.org/grpc"
 
 	kmsapi "github.com/kaijun123/kubernetes-kms/apis/v2"
+	"github.com/kaijun123/kubernetes-kms/pkg/util"
 	"k8s.io/klog/v2"
 )
 
 // GRPCService is a grpc server that runs the kms v2 alpha1 API.
 type GRPCService struct {
-	// These 3 should be fixed
-	addr    string
-	timeout time.Duration
-	server  *grpc.Server
-
-	// Need to edit the kmsService methods
-	kmsService Service
+	addr       string
+	timeout    time.Duration
+	server     *grpc.Server
+	kmsService util.Service
 }
 
 // Asserts that the GRPC implements kmsapi.KeyManagementServiceServer: ie Status, Encrypt, Decrypt
@@ -46,7 +44,7 @@ func NewGRPCService(
 	address string,
 	timeout time.Duration,
 
-	kmsService Service,
+	kmsService util.Service,
 ) *GRPCService {
 	klog.V(4).InfoS("KMS plugin configured", "address", address, "timeout", timeout)
 
@@ -105,7 +103,7 @@ func (s *GRPCService) Status(ctx context.Context, _ *kmsapi.StatusRequest) (*kms
 	return &kmsapi.StatusResponse{
 		Version: res.Version,
 		Healthz: res.Healthz,
-		KeyId:   res.KeyID,
+		KeyId:   res.KeyId,
 	}, nil
 }
 
@@ -113,10 +111,9 @@ func (s *GRPCService) Status(ctx context.Context, _ *kmsapi.StatusRequest) (*kms
 func (s *GRPCService) Decrypt(ctx context.Context, req *kmsapi.DecryptRequest) (*kmsapi.DecryptResponse, error) {
 	klog.V(4).InfoS("decrypt request received", "id", req.Uid)
 
-	plaintext, err := s.kmsService.Decrypt(ctx, req.Uid, &DecryptRequest{
-		Ciphertext:  req.Ciphertext,
-		KeyID:       req.KeyId,
-		Annotations: req.Annotations,
+	plaintext, err := s.kmsService.Decrypt(ctx, req.Uid, &util.DecryptRequestBody{
+		KeyId:      req.KeyId,
+		Ciphertext: req.Ciphertext,
 	})
 	if err != nil {
 		return nil, err
@@ -131,14 +128,14 @@ func (s *GRPCService) Decrypt(ctx context.Context, req *kmsapi.DecryptRequest) (
 func (s *GRPCService) Encrypt(ctx context.Context, req *kmsapi.EncryptRequest) (*kmsapi.EncryptResponse, error) {
 	klog.V(4).InfoS("encrypt request received", "id", req.Uid)
 
-	encRes, err := s.kmsService.Encrypt(ctx, req.Uid, req.Plaintext)
+	encryptResponseBody, err := s.kmsService.Encrypt(ctx, req.Uid, req.Plaintext)
 	if err != nil {
 		return nil, err
 	}
 
 	return &kmsapi.EncryptResponse{
-		Ciphertext:  encRes.Ciphertext,
-		KeyId:       encRes.KeyID,
-		Annotations: encRes.Annotations,
+		Ciphertext:  encryptResponseBody.Ciphertext,
+		KeyId:       encryptResponseBody.KeyId,
+		Annotations: encryptResponseBody.Annotations,
 	}, nil
 }
