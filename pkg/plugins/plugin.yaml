@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mock-kmsv2-provider
+  namespace: kube-system
+  labels:
+    tier: control-plane
+    component: mock-kmsv2-provider
+spec:
+  hostNetwork: true
+  containers:
+    - name: mock-kmsv2-provider
+      image: kaijun123/kubernetes-kms:v1
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: sock
+          mountPath: /tmp
+  volumes:
+    - name: sock
+      hostPath:
+        path: /tmp
