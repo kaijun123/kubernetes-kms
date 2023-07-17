@@ -94,19 +94,19 @@ func (s *qrngRemoteService) Status(ctx context.Context) (*util.StatusResponseBod
 // When creating a new instance of qrngRemoteService, you need to obtain a new keyId from the qrng.
 func NewQrngRemoteService() (*qrngRemoteService, error) {
 	fmt.Println("Calling NewQrngRemoteService()......")
-	fmt.Println("before creating http client pointer")
+	// fmt.Println("before creating http client pointer")
 
 	httpClient := http.NewHTTPClient()
-	fmt.Println("after creating http client pointer")
+	// fmt.Println("after creating http client pointer")
 	fmt.Println(httpClient)
 
-	fmt.Println("before calling Init()")
+	// fmt.Println("before calling Init()")
 	res, err := httpClient.Init()
 	if err != nil {
 		log.Fatalf("error during init: %s", err)
 		return nil, err
 	}
-	fmt.Println("after calling Init()")
+	// fmt.Println("after calling Init()")
 
 	responseBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {

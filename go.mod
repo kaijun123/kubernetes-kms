@@ -31,3 +31,5 @@ replace (
 	k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20230619010326-2680937a8b38
 	k8s.io/client-go => k8s.io/client-go v0.0.0-20230619010903-808ebc843ba9
 )
+
+// replace k8s.io/kms => github.com/kaijun123/kubernetes-kms v0.0.0-20230714022857-8cfd89ed42a2

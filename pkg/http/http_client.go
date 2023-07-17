@@ -3,16 +3,19 @@ package http
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/kaijun123/kubernetes-kms/pkg/util"
 )
 
-const (
-	encryptUrl = "http://host.docker.internal:8080/encrypt"
-	decryptUrl = "http://host.docker.internal:8080/decrypt"
-	initUrl    = "http://host.docker.internal:8080/init"
+var (
+	baseUrl    = os.Getenv("IP_ADDRESS")
+	encryptUrl = "http://" + baseUrl + ":8080/encrypt"
+	decryptUrl = "http://" + baseUrl + ":8080/decrypt"
+	initUrl    = "http://" + baseUrl + ":8080/init"
 )
 
 type HTTPClient struct {
@@ -109,6 +112,7 @@ func (c *HTTPClient) Init() (*http.Response, error) {
 
 // To be called when creating a new qrngRemoteService. ie calling NewQrngRemoteService
 func NewHTTPClient() *HTTPClient {
+	fmt.Println("IP_ADDRESS", os.Getenv("IP_ADDRESS"))
 	return &HTTPClient{
 		encryptUrl: encryptUrl,
 		decryptUrl: decryptUrl,
