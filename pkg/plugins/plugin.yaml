@@ -10,16 +10,18 @@ spec:
   hostNetwork: true
   containers:
     - name: mock-kmsv2-provider
-      image: kaijun123/kubernetes-kms:v1
+      image: kaijun123/kubernetes-kms:v2
       imagePullPolicy: IfNotPresent
+      command: ["./main"]
       livenessProbe:
         httpGet:
           path: /healthz
           port: 8087
       volumeMounts:
         - name: sock
-          mountPath: /tmp
+          mountPath: /opt
   volumes:
     - name: sock
       hostPath:
-        path: /tmp
+        path: /opt
+        type: DirectoryOrCreate

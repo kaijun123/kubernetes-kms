@@ -96,6 +96,9 @@ spec:
     - mountPath: /etc/kubernetes/enc
       name: enc-vol
       readOnly: true
+    - mountPath: /opt
+      name: sock
+      readOnly: true
   hostNetwork: true
   priorityClassName: system-node-critical
   securityContext:
@@ -126,4 +129,8 @@ spec:
       path: /etc/kubernetes/encryption
       type: DirectoryOrCreate
     name: enc-vol
+  - hostPath:
+      path: /opt
+      type: DirectoryOrCreate
+    name: sock
 status: {}
