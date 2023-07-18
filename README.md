@@ -11,7 +11,7 @@ Code for the on-premise-server can be found at https://github.com/kaijun123/kms-
 ### Environment
 - M1 Mac (arm64)
 - Docker Desktop 4.9.0 
-- Minikube v0.0.39
+- Minikube v1.30.1 (Kubernetes v1.26.3)
 
 ### Directory
 - ```pkg/scripts```: 
