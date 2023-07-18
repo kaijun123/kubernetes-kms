@@ -12,6 +12,10 @@ spec:
     - name: mock-kmsv2-provider
       image: kaijun123/kubernetes-kms:v1
       imagePullPolicy: IfNotPresent
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: 8087
       volumeMounts:
         - name: sock
           mountPath: /tmp

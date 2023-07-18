@@ -19,7 +19,7 @@ func InitHttpServer(service util.Service) *http.Server {
 		if err != nil || status.Healthz != "ok" {
 			err := fmt.Errorf("failed health check: %s", err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err,
+				"error": err.Error(),
 			})
 			return
 		}
