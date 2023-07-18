@@ -19,11 +19,13 @@ package main
 import (
 	"context"
 	"flag"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/kaijun123/kubernetes-kms/pkg/healthz"
 	"github.com/kaijun123/kubernetes-kms/pkg/qrng"
 	"github.com/kaijun123/kubernetes-kms/pkg/service"
 	"github.com/kaijun123/kubernetes-kms/pkg/util"
@@ -51,6 +53,7 @@ func main() {
 	}
 
 	ctx := withShutdownSignal(context.Background())
+
 	grpcService := service.NewGRPCService(
 		addr,
 		*timeout,
@@ -65,7 +68,16 @@ func main() {
 		}
 	}()
 
+	httpServer := healthz.InitHttpServer(remoteKMSService)
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			klog.ErrorS(err, "failed to serve")
+			os.Exit(1)
+		}
+	}()
+
 	<-ctx.Done()
+
 	klog.InfoS("shutting down server")
 	grpcService.Shutdown()
 }
