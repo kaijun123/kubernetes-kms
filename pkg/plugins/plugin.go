@@ -33,7 +33,7 @@ import (
 )
 
 var (
-	listenAddr = flag.String("listen-addr", "unix:///opt/kms.socket", "gRPC listen address")
+	listenAddr = flag.String("listen-addr", "unix:///tmp/kms.socket", "gRPC listen address")
 	timeout    = flag.Duration("timeout", 5*time.Second, "gRPC timeout")
 )
 

@@ -7,6 +7,6 @@ resources:
       - kms:
           apiVersion: v2
           name: mock-kmsv2-provider
-          endpoint: unix:///opt/kms.socket
+          endpoint: unix:///tmp/kms.socket
           timeout: 3s
       - identity: {}
