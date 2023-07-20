@@ -1,7 +1,13 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+# this containerd config patch sets the registry to the local registry where we push mock kms provider
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+    endpoint = ["http://kind-registry:5000"]
 nodes:
 - role: control-plane
+  image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
   extraMounts:
   - containerPath: /etc/kubernetes/encryption/encryption-conf.yaml
     hostPath: /Users/kaijun/Go/src/kms/pkg/scripts/kms-encryption-conf.yaml
@@ -28,7 +34,6 @@ nodes:
         - name: sock-path
           hostPath: "/tmp"
           mountPath: "/tmp"
-          type: DirectoryOrCreate
       scheduler:
         extraArgs:
           v: "5"

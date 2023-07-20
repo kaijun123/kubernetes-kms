@@ -30,7 +30,7 @@ func TestMain(t *testing.T) {
 	err3 := json.Unmarshal(body, &data)
 	assert.Equal(t, err3, nil)
 
-	keyId = data["keyId"]
+	keyId = data["key_id"]
 	fmt.Printf("KeyId: %s\n", keyId)
 }
 

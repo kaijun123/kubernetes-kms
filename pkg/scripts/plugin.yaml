@@ -10,13 +10,12 @@ spec:
   hostNetwork: true
   containers:
     - name: mock-kmsv2-provider
-      image: kaijun123/kubernetes-kms:v4
+      image: localhost:5000/mock-kms-provider:e2e
       imagePullPolicy: IfNotPresent
       volumeMounts:
-        - name: sock-path
+        - name: sock
           mountPath: /tmp
   volumes:
-    - name: sock-path
+    - name: sock
       hostPath:
         path: /tmp
-        type: DirectoryOrCreate
