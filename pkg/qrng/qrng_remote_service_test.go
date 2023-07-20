@@ -31,11 +31,11 @@ func TestNewQrngRemoteService(t *testing.T) {
 	t.Run("should be able to encrypt and decrypt", func(t *testing.T) {
 		encryptionResponseBody, err := qrngRemoteService.Encrypt(ctx, "", plaintext)
 		assert.Equal(t, err, nil)
-		assert.Equal(t, qrngRemoteService.keyId, encryptionResponseBody.KeyId, "keyId should always be the same")
+		assert.Equal(t, qrngRemoteService.KeyId, encryptionResponseBody.KeyId, "keyId should always be the same")
 		assert.NotEqual(t, plaintext, encryptionResponseBody.Ciphertext, "plaintext and ciphertext cannot be the same")
 
 		newPlaintext, err := qrngRemoteService.Decrypt(ctx, "", &util.DecryptRequestBody{
-			KeyId:      qrngRemoteService.keyId,
+			KeyId:      qrngRemoteService.KeyId,
 			Ciphertext: encryptionResponseBody.Ciphertext,
 		})
 		assert.Equal(t, err, nil)
@@ -45,7 +45,7 @@ func TestNewQrngRemoteService(t *testing.T) {
 	t.Run("should return error when decrypt with an invalid keyId", func(t *testing.T) {
 		encryptionResponseBody, err := qrngRemoteService.Encrypt(ctx, "", plaintext)
 		assert.Equal(t, err, nil)
-		assert.Equal(t, qrngRemoteService.keyId, encryptionResponseBody.KeyId, "keyId should always be the same")
+		assert.Equal(t, qrngRemoteService.KeyId, encryptionResponseBody.KeyId, "keyId should always be the same")
 		assert.NotEqual(t, plaintext, encryptionResponseBody.Ciphertext, "plaintext and ciphertext cannot be the same")
 
 		_, err = qrngRemoteService.Decrypt(ctx, "", &util.DecryptRequestBody{
@@ -54,7 +54,7 @@ func TestNewQrngRemoteService(t *testing.T) {
 		})
 
 		if err.Error() != "invalid keyID" {
-			t.Errorf("should have returned an invalid keyID error. Got %v, requested keyID: %q, remote service keyID: %q", err, encryptionResponseBody.KeyId+"1", qrngRemoteService.keyId)
+			t.Errorf("should have returned an invalid keyID error. Got %v, requested keyID: %q, remote service keyID: %q", err, encryptionResponseBody.KeyId+"1", qrngRemoteService.KeyId)
 		}
 	})
 

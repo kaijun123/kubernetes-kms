@@ -39,21 +39,6 @@ func TestEncrypt(t *testing.T) {
 	res, err := httpClient.Encrypt(keyId, plaintext)
 	assert.Equal(t, err, nil)
 	ciphertext = res
-
-	// encryptResp, encryptRespErr := httpClient.Encrypt(keyId, plaintext)
-	// assert.Equal(t, encryptResp.StatusCode, 200)
-	// assert.Equal(t, encryptRespErr, nil)
-
-	// encryptBody, encryptBodyErr := ioutil.ReadAll(encryptResp.Body)
-	// assert.Equal(t, encryptBodyErr, nil)
-
-	// var data2 map[string][]byte
-	// unmarshalErr2 := json.Unmarshal(encryptBody, &data2)
-	// assert.Equal(t, unmarshalErr2, nil)
-
-	// ciphertext = data2["ciphertext"]
-
-	// fmt.Printf("ciphertext: %v\n", string(ciphertext))
 }
 
 // call decrypt url on the on-premise server
@@ -62,20 +47,4 @@ func TestDecrypt(t *testing.T) {
 	assert.Equal(t, err, nil)
 	newPlaintext := res
 	assert.Equal(t, newPlaintext, plaintext, "did not obtain back the inital plaintext")
-
-	// decryptResp, decryptRespErr := httpClient.Decrypt(keyId, ciphertext)
-	// assert.Equal(t, decryptResp.StatusCode, 200)
-	// assert.Equal(t, decryptRespErr, nil)
-
-	// decryptBody, decryptBodyErr := ioutil.ReadAll(decryptResp.Body)
-	// assert.Equal(t, decryptBodyErr, nil)
-
-	// var data3 map[string][]byte
-	// unmarshalErr3 := json.Unmarshal(decryptBody, &data3)
-	// assert.Equal(t, unmarshalErr3, nil)
-
-	// newPlaintext := data3["plaintext"]
-	// assert.Equal(t, newPlaintext, plaintext)
-
-	// fmt.Println(plaintext)
 }

@@ -10,13 +10,6 @@ import (
 	"github.com/kaijun123/kubernetes-kms/pkg/util"
 )
 
-// var (
-// 	baseUrl    = os.Getenv("IP_ADDRESS")
-// 	encryptUrl = "http://" + baseUrl + ":8080/encrypt"
-// 	decryptUrl = "http://" + baseUrl + ":8080/decrypt"
-// 	initUrl    = "http://" + baseUrl + ":8080/init"
-// )
-
 type HTTPClient struct {
 	encryptUrl string
 	decryptUrl string
@@ -120,10 +113,6 @@ func NewHTTPClient() *HTTPClient {
 	encryptUrl := "http://" + baseUrl + ":8080/encrypt"
 	decryptUrl := "http://" + baseUrl + ":8080/decrypt"
 	initUrl := "http://" + baseUrl + ":8080/init"
-
-	// fmt.Println("encryptUrl", encryptUrl)
-	// fmt.Println("decryptUrl", decryptUrl)
-	// fmt.Println("initUrl", initUrl)
 
 	return &HTTPClient{
 		encryptUrl: encryptUrl,

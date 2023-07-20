@@ -29,11 +29,11 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"k8s.io/apimachinery/pkg/util/wait"
 
 	kmsapi "github.com/kaijun123/kubernetes-kms/apis/v2"
 	"github.com/kaijun123/kubernetes-kms/pkg/qrng"
 	"github.com/kaijun123/kubernetes-kms/pkg/util"
-	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const version = "v2beta1"
@@ -53,6 +53,7 @@ func TestGRPCService(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// // Start the gRPC server
 	// kmsService := newBase64Service(id)
 	// server := NewGRPCService(address, defaultTimeout, kmsService)
 
@@ -68,6 +69,7 @@ func TestGRPCService(t *testing.T) {
 	}()
 	t.Cleanup(server.Shutdown)
 
+	// Start the gRPC client
 	client := newClient(t, address)
 
 	// make sure the gRPC server is up before running tests
@@ -176,7 +178,7 @@ func (s *testService) Status(ctx context.Context) (*util.StatusResponseBody, err
 
 // Creates a random keyId
 func makeID(rand func([]byte) (int, error)) (string, error) {
-	b := make([]byte, 10)
+	b := make([]byte, 12)
 	if _, err := rand(b); err != nil {
 		return "", err
 	}
@@ -184,6 +186,8 @@ func makeID(rand func([]byte) (int, error)) (string, error) {
 	return base64.StdEncoding.EncodeToString(b), nil
 }
 
+// // Used to a mock KMS service for testing purposes
+// // The mock KMS service is used to create a the gRPC server
 // func newBase64Service(keyId string) *testService {
 // 	decrypt := func(_ context.Context, _ string, req *util.DecryptRequestBody) ([]byte, error) {
 // 		if req.KeyId != keyId {

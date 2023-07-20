@@ -16,7 +16,7 @@ var _ util.Service = (*qrngRemoteService)(nil)
 
 // No need for transformer
 type qrngRemoteService struct {
-	keyId      string
+	KeyId      string
 	httpClient *http.HTTPClient // Used for calling the apis on the on-premise server
 }
 
@@ -24,14 +24,14 @@ type qrngRemoteService struct {
 func (s *qrngRemoteService) Encrypt(ctx context.Context, uid string, plaintext []byte) (*util.EncryptResponseBody, error) {
 	fmt.Println("Calling Encrypt()......")
 
-	ciphertext, err := s.httpClient.Encrypt(s.keyId, plaintext)
+	ciphertext, err := s.httpClient.Encrypt(s.KeyId, plaintext)
 	if err != nil {
 		return nil, err
 	}
 
 	fmt.Println("End of Encrypt()......")
 	return &util.EncryptResponseBody{
-		KeyId:      s.keyId,
+		KeyId:      s.KeyId,
 		Ciphertext: ciphertext,
 		Annotations: map[string][]byte{
 			"mockAnnotationKey": []byte("1"),
@@ -43,7 +43,7 @@ func (s *qrngRemoteService) Encrypt(ctx context.Context, uid string, plaintext [
 func (s *qrngRemoteService) Decrypt(ctx context.Context, uid string, req *util.DecryptRequestBody) ([]byte, error) {
 	fmt.Println("Calling Decrypt()......")
 
-	if req.KeyId != s.keyId {
+	if req.KeyId != s.KeyId {
 		return nil, errors.New("invalid keyID")
 	}
 
@@ -66,11 +66,11 @@ func (s *qrngRemoteService) Status(ctx context.Context) (*util.StatusResponseBod
 	plaintext := util.GenerateRandomString(32)
 	// fmt.Println("plaintext: ", plaintext)
 
-	ciphertext, err := s.httpClient.Encrypt(s.keyId, []byte(plaintext))
+	ciphertext, err := s.httpClient.Encrypt(s.KeyId, []byte(plaintext))
 	if err != nil {
 		return nil, err
 	}
-	newPlaintext, err := s.httpClient.Decrypt(s.keyId, ciphertext)
+	newPlaintext, err := s.httpClient.Decrypt(s.KeyId, ciphertext)
 	if err != nil {
 		return nil, err
 	}
@@ -84,8 +84,9 @@ func (s *qrngRemoteService) Status(ctx context.Context) (*util.StatusResponseBod
 	resp := &util.StatusResponseBody{
 		Version: "v2beta1",
 		Healthz: "ok",
-		KeyId:   s.keyId,
+		KeyId:   s.KeyId,
 	}
+	fmt.Println("resp", resp)
 	fmt.Println("End of Status()......")
 	return resp, nil
 }
@@ -118,7 +119,7 @@ func NewQrngRemoteService() (*qrngRemoteService, error) {
 	// fmt.Println("KeyId: ", initResponse.KeyId)
 
 	qRemoteService := &qrngRemoteService{
-		keyId:      initResponse.KeyId,
+		KeyId:      initResponse.KeyId,
 		httpClient: httpClient,
 	}
 	fmt.Println("End of NewQrngRemoteService()......")

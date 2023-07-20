@@ -13,17 +13,17 @@ type Service interface {
 }
 
 type EncryptRequestBody struct {
-	KeyId     string `json:"keyId"`
+	KeyId     string `json:"key_id"`
 	Plaintext []byte `json:"plaintext"`
 }
 
 type DecryptRequestBody struct {
-	KeyId      string `json:"keyId"`
-	Ciphertext []byte `json:"plaintext"`
+	KeyId      string `json:"key_id"`
+	Ciphertext []byte `json:"ciphertext"`
 }
 
 type InitResponse struct {
-	KeyId string `json:"keyId"`
+	KeyId string `json:"key_id"`
 }
 
 // EncryptResponse is the response from the Envelope service when encrypting data.
