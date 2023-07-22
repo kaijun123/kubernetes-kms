@@ -13,6 +13,7 @@ import (
 type HTTPClient struct {
 	encryptUrl string
 	decryptUrl string
+	statusUrl  string
 	initUrl    string
 }
 
@@ -92,6 +93,16 @@ func (c *HTTPClient) Decrypt(keyId string, ciphertext []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
+// call Status api on the on-premise server
+func (c *HTTPClient) Status() (*http.Response, error) {
+	resp, err := http.Get(c.statusUrl)
+	if err != nil {
+		return nil, err
+	}
+	// fmt.Println("response: ", resp)
+	return resp, nil
+}
+
 // call Init api on the on-premise server
 func (c *HTTPClient) Init() (*http.Response, error) {
 	resp, err := http.Get(c.initUrl)
@@ -112,11 +123,13 @@ func NewHTTPClient() *HTTPClient {
 	baseUrl := os.Getenv("IP_ADDRESS")
 	encryptUrl := "http://" + baseUrl + ":8080/encrypt"
 	decryptUrl := "http://" + baseUrl + ":8080/decrypt"
+	statusUrl := "http://" + baseUrl + ":8080/status"
 	initUrl := "http://" + baseUrl + ":8080/init"
 
 	return &HTTPClient{
 		encryptUrl: encryptUrl,
 		decryptUrl: decryptUrl,
+		statusUrl:  statusUrl,
 		initUrl:    initUrl,
 	}
 }

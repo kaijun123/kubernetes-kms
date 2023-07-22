@@ -28,14 +28,14 @@ type InitResponse struct {
 
 // EncryptResponse is the response from the Envelope service when encrypting data.
 type EncryptResponseBody struct {
-	Ciphertext  []byte
-	KeyId       string
-	Annotations map[string][]byte
+	Ciphertext  []byte            `json:"ciphertext"`
+	KeyId       string            `json:"key_id"`
+	Annotations map[string][]byte `json:"annotations"`
 }
 
 // StatusResponse is the response from the Envelope service when getting the status of the service.
 type StatusResponseBody struct {
-	Version string
-	Healthz string
-	KeyId   string
+	Version string `json:"version"`
+	Healthz string `json:"healthz"`
+	KeyId   string `json:"key_id"`
 }

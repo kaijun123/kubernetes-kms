@@ -48,3 +48,9 @@ func TestDecrypt(t *testing.T) {
 	newPlaintext := res
 	assert.Equal(t, newPlaintext, plaintext, "did not obtain back the inital plaintext")
 }
+
+// call status url on the on-premise server
+func TestStatus(t *testing.T) {
+	_, err := httpClient.Status()
+	assert.Equal(t, err, nil)
+}
