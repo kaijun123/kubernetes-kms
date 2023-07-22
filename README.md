@@ -11,10 +11,10 @@ Code for the on-premise-server can be found at https://github.com/kaijun123/kms-
 ### Explanation of KMS v2beta1
 - Refer to [KMS.md](pkg/scripts/KMS.md) for a full explanation
 <p align="center">
-    <img src="./images/Decrypt\ Request.png">
-    <img src="./images/Encrypt\ Request.png">
-    <img src="./images/Status\ Request.png">
-    <img src="./images/Generate\ DEK.png">
+    <img src="images/Decrypt-Request.png">
+    <img src="images/Encrypt-Request.png">
+    <img src="images/Status-Request.png">
+    <img src="images/Generate-DEK.png">
 </p>
 
 ### Environment
