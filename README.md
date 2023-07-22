@@ -46,5 +46,7 @@ Code for the on-premise-server can be found at https://github.com/kaijun123/kms-
   - https://github.com/kubernetes-sigs/aws-encryption-provider
 - Oracle:
   - https://github.com/kaijun123/oracle-kubernetes-vault-kms-plugin/tree/master
+- AKeyLess:
+  - https://www.akeyless.io/blog/akeyless-kubernetes-external-kms-plugin-for-secrets-encryption/
 - Kubernetes Auth:
   - https://github.com/kubernetes/kubernetes/tree/master/test/e2e/testing-manifests/auth/encrypt
