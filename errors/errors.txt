@@ -1,0 +1,66 @@
+Unfortunately, an error has occurred:
+        timed out waiting for the condition
+
+This error is likely caused by:
+        - The kubelet is not running
+        - The kubelet is unhealthy due to a misconfiguration of the node in some way (required cgroups disabled)
+
+If you are on a systemd-powered system, you can try to troubleshoot the error with the following commands:
+        - 'systemctl status kubelet'
+        - 'journalctl -xeu kubelet'
+
+Additionally, a control plane component may have crashed or exited when started by the container runtime.
+To troubleshoot, list all containers using your preferred container runtimes CLI.
+Here is one example how you may list all running Kubernetes containers by using crictl:
+        - 'crictl --runtime-endpoint unix:///run/containerd/containerd.sock ps -a | grep kube | grep -v pause'
+        Once you have found the failing container, you can inspect its logs with:
+        - 'crictl --runtime-endpoint unix:///run/containerd/containerd.sock logs CONTAINERID'
+couldn't initialize a Kubernetes cluster
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/init.runWaitControlPlanePhase
+        cmd/kubeadm/app/cmd/phases/init/waitcontrolplane.go:108
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/workflow.(*Runner).Run.func1
+        cmd/kubeadm/app/cmd/phases/workflow/runner.go:259
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/workflow.(*Runner).visitAll
+        cmd/kubeadm/app/cmd/phases/workflow/runner.go:446
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/workflow.(*Runner).Run
+        cmd/kubeadm/app/cmd/phases/workflow/runner.go:232
+k8s.io/kubernetes/cmd/kubeadm/app/cmd.newCmdInit.func1
+        cmd/kubeadm/app/cmd/init.go:111
+github.com/spf13/cobra.(*Command).execute
+        vendor/github.com/spf13/cobra/command.go:916
+github.com/spf13/cobra.(*Command).ExecuteC
+        vendor/github.com/spf13/cobra/command.go:1040
+github.com/spf13/cobra.(*Command).Execute
+        vendor/github.com/spf13/cobra/command.go:968
+k8s.io/kubernetes/cmd/kubeadm/app.Run
+        cmd/kubeadm/app/kubeadm.go:50
+main.main
+        cmd/kubeadm/kubeadm.go:25
+runtime.main
+        /usr/local/go/src/runtime/proc.go:250
+runtime.goexit
+        /usr/local/go/src/runtime/asm_arm64.s:1172
+error execution phase wait-control-plane
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/workflow.(*Runner).Run.func1
+        cmd/kubeadm/app/cmd/phases/workflow/runner.go:260
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/workflow.(*Runner).visitAll
+        cmd/kubeadm/app/cmd/phases/workflow/runner.go:446
+k8s.io/kubernetes/cmd/kubeadm/app/cmd/phases/workflow.(*Runner).Run
+        cmd/kubeadm/app/cmd/phases/workflow/runner.go:232
+k8s.io/kubernetes/cmd/kubeadm/app/cmd.newCmdInit.func1
+        cmd/kubeadm/app/cmd/init.go:111
+github.com/spf13/cobra.(*Command).execute
+        vendor/github.com/spf13/cobra/command.go:916
+github.com/spf13/cobra.(*Command).ExecuteC
+        vendor/github.com/spf13/cobra/command.go:1040
+github.com/spf13/cobra.(*Command).Execute
+        vendor/github.com/spf13/cobra/command.go:968
+k8s.io/kubernetes/cmd/kubeadm/app.Run
+        cmd/kubeadm/app/kubeadm.go:50
+main.main
+        cmd/kubeadm/kubeadm.go:25
+runtime.main
+        /usr/local/go/src/runtime/proc.go:250
+runtime.goexit
+        /usr/local/go/src/runtime/asm_arm64.s:1172
+(base) kaijun@Angs-MBP-2 kms % 

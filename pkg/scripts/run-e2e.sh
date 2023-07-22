@@ -159,7 +159,7 @@ main(){
     build_and_push_mock_plugin
     connect_registry &
     create_cluster_and_run_test
-    # cleanup
+    cleanup
 }
 
 trap cleanup INT TERM

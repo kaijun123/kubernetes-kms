@@ -1,21 +1,19 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-# this containerd config patch sets the registry to the local registry where we push mock kms provider
-containerdConfigPatches:
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
-    endpoint = ["http://kind-registry:5000"]
 nodes:
 - role: control-plane
   image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
   extraMounts:
+  - containerPath: /mount
+    hostPath: /Users/kaijun/Go/src/kms/pkg/scripts/
+    propagation: None
   - containerPath: /etc/kubernetes/encryption/encryption-conf.yaml
-    hostPath: /Users/kaijun/Go/src/kms/pkg/scripts/kms-encryption-conf.yaml
-    readOnly: true
+    hostPath: /Users/kaijun/Go/src/kms/pkg/scripts/encryption-conf.yaml
+    # readOnly: true
     propagation: None
   - containerPath: /etc/kubernetes/manifests/plugin.yaml
     hostPath: /Users/kaijun/Go/src/kms/pkg/scripts/plugin.yaml
-    readOnly: true
+    # readOnly: true
     propagation: None
   kubeadmConfigPatches:
     - |
@@ -24,16 +22,18 @@ nodes:
         extraArgs:
           feature-gates: "KMSv2=true"
           encryption-provider-config: "/etc/kubernetes/enc/encryption-conf.yaml"
+          encryption-provider-config-automatic-reload: "true"
           v: "5"
         extraVolumes:
         - name: enc-vol
           hostPath: "/etc/kubernetes/encryption/encryption-conf.yaml"
           mountPath: "/etc/kubernetes/enc/encryption-conf.yaml"
           readOnly: true
-          type: File
+          pathType: File
         - name: sock-path
           hostPath: "/tmp"
           mountPath: "/tmp"
+          type: DirectoryOrCreate
       scheduler:
         extraArgs:
           v: "5"

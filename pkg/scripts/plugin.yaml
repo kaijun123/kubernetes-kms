@@ -10,8 +10,14 @@ spec:
   hostNetwork: true
   containers:
     - name: mock-kmsv2-provider
-      image: localhost:5000/mock-kms-provider:e2e
+      image: kaijun123/kubernetes-kms:v8
       imagePullPolicy: IfNotPresent
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: 8087
+        failureThreshold: 2
+        periodSeconds: 10
       volumeMounts:
         - name: sock
           mountPath: /tmp
