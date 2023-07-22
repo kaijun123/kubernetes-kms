@@ -8,15 +8,6 @@ In my design, the KMS plugin will communicate with an on-premise server via REST
 
 Code for the on-premise-server can be found at https://github.com/kaijun123/kms-on-premise-server. The on-premise-server must be running before running the plugin.
 
-### Explanation of KMS v2beta1
-- Refer to [KMS.md](pkg/scripts/KMS.md) for a full explanation
-<p align="center">
-    <img src="images/Decrypt-Request.png">
-    <img src="images/Encrypt-Request.png">
-    <img src="images/Status-Request.png">
-    <img src="images/Generate-DEK.png">
-</p>
-
 ### Environment
 - M1 Mac (arm64)
 - Docker Desktop 4.9.0 
@@ -27,3 +18,31 @@ Code for the on-premise-server can be found at https://github.com/kaijun123/kms-
   - Contains yaml files for configuration and 2 shell scripts to simplify the configuration process. 
   - The scripts will be run in the control-panel shell, after the directory is mounted
 - ```pkg/plugins/plugin.go```: Entrance of the repo
+
+### Explanation of KMS v2beta1
+- Refer to [KMS.md](pkg/scripts/KMS.md) for a full explanation
+<p align="center">
+    <img src="images/Decrypt-Request.png">
+    <img src="images/Encrypt-Request.png">
+    <img src="images/Status-Request.png">
+    <img src="images/Generate-DEK.png">
+</p>
+
+### Areas for improvement/ Future works
+- Instead of making the manual changes to the encryption config file and deploying a new plugin when rotating keys, it is possible to do scheduled key rotation on the remote KMS alone. 
+- This can be done by creating a script/ cli tool for the remote KMS server to generate a new KEK. The ```Status``` rpc response will change to notify the apiserver of the new KEK. ```keyId``` in the plugin will be updated. The old encryption key will be stored in the remote server. 
+- New encryptions will involve the new KEK. But existing decryptions will be decrypted with the old KEK
+- Right now, the annotation field is just a hardcoded value. However, it can instead contain information about the time of encryption. Hence when the ```Decryption``` rpc method is called, the remote server is able to identity the correct KEK to use.
+
+### Code References:
+- Thales:
+  - https://cpl.thalesgroup.com/sites/default/files/content/integration_guides/field_document/2020-12/Kubernetes%20Secret%20Encryption_IntegrationGuide_RevA.pdf
+  - https://github.com/thalescpl-io/k8s-kms-plugin
+- Azure:
+  - https://github.com/Azure/kubernetes-kms
+- Trousseau:
+  - https://github.com/ondat/trousseau
+- AWS encryption provider:
+  - https://github.com/kubernetes-sigs/aws-encryption-provider
+- Oracle:
+  - https://github.com/kaijun123/oracle-kubernetes-vault-kms-plugin/tree/master
