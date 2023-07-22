@@ -34,7 +34,7 @@ func (s *qrngRemoteService) Encrypt(ctx context.Context, uid string, plaintext [
 		KeyId:      s.KeyId,
 		Ciphertext: ciphertext,
 		Annotations: map[string][]byte{
-			"mockAnnotationKey": []byte("1"),
+			"somekey.mycompany.com": []byte("1"),
 		},
 	}, nil
 }
@@ -61,7 +61,8 @@ func (s *qrngRemoteService) Decrypt(ctx context.Context, uid string, req *util.D
 // If an EncryptRequest procedure call returns a key_id that is different from Status, the response is thrown away and the plugin is considered unhealthy.
 // In this methodm, we perform a simple encrypt/decrypt operation to verify the plugin's connectivity with On-Premise server.
 func (s *qrngRemoteService) Status(ctx context.Context) (*util.StatusResponseBody, error) {
-	fmt.Println("Calling Status()......")
+	log.Println("Calling Status()......")
+	log.Println("keyId", s.KeyId)
 
 	plaintext := util.GenerateRandomString(32)
 	// fmt.Println("plaintext: ", plaintext)
@@ -81,13 +82,18 @@ func (s *qrngRemoteService) Status(ctx context.Context) (*util.StatusResponseBod
 		return nil, err
 	}
 
+	// _, err := s.httpClient.Status()
+	// if err != nil {
+	// 	log.Println("Calling status failed")
+	// }
+
 	resp := &util.StatusResponseBody{
 		Version: "v2beta1",
 		Healthz: "ok",
 		KeyId:   s.KeyId,
 	}
 	fmt.Println("resp", resp)
-	fmt.Println("End of Status()......")
+	log.Println("End of Status()......")
 	return resp, nil
 }
 
@@ -117,6 +123,7 @@ func NewQrngRemoteService() (*qrngRemoteService, error) {
 	var initResponse util.InitResponse
 	json.Unmarshal(responseBody, &initResponse)
 	// fmt.Println("KeyId: ", initResponse.KeyId)
+	log.Println("init keyId", initResponse.KeyId)
 
 	qRemoteService := &qrngRemoteService{
 		KeyId:      initResponse.KeyId,
