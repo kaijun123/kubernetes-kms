@@ -3,6 +3,7 @@ package http
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -125,6 +126,7 @@ func NewHTTPClient() *HTTPClient {
 	decryptUrl := "http://" + baseUrl + ":8080/decrypt"
 	statusUrl := "http://" + baseUrl + ":8080/status"
 	initUrl := "http://" + baseUrl + ":8080/init"
+	fmt.Println("baseUrl:", baseUrl)
 
 	return &HTTPClient{
 		encryptUrl: encryptUrl,

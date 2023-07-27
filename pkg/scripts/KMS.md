@@ -75,7 +75,7 @@ ETCDCTL_API=3 etcdctl \
 
 <!-- Login to control panel shell -->
 docker ps
-docker exec -t <container-id> bash
+docker exec -it <container-id> bash
 
 <!-- Rotate keys -->
 cd /mount
