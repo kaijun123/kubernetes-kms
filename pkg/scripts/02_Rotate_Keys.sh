@@ -14,7 +14,7 @@ spec:
   hostNetwork: true
   containers:
     - name: mock-kmsv2-provider
-      image: kaijun123/kubernetes-kms:v8
+      image: kaijun123/kubernetes-kms:v9
       imagePullPolicy: IfNotPresent
       livenessProbe:
         httpGet:

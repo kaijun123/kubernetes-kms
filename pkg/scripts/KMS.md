@@ -158,7 +158,7 @@ kubectl get secrets --all-namespaces -o json | kubectl replace -f -
   ```
   containers:
     - name: mock-kmsv2-provider
-      image: kaijun123/kubernetes-kms:v8
+      image: kaijun123/kubernetes-kms:v9
       imagePullPolicy: IfNotPresent
   ```
 - Mount the unix socket on the Node into the plugin so that the gRPC server can listen to the unix socket
